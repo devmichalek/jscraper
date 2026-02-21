@@ -2,8 +2,8 @@
 
 
 ## Build dependencies
-1. `rustup` - a command line tool for managing Rust version and associated tools
-2. 
+1. [Docker engine](https://docs.docker.com/engine/install/)
+2. [Make](https://www.gnu.org/software/make/)
 
 ## Ideas
 1. run `cargo --version` and `rustc --version` in jenkins
