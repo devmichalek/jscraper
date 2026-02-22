@@ -1,32 +1,30 @@
-DOCKER_IMAGE_ENV_NAME ?= docker-jscraper-env
-DOCKER_IMAGE_RELEASE_NAME ?= docker-jscraper-release
-DOCKER_IMAGE_RELEASE_TAG ?= "1.0.0"
-DOCKER_CONTAINER_ENV_NAME ?= $(DOCKER_IMAGE_ENV_NAME)
-DOCKER_CONTAINER_RELEASE_NAME ?= $(DOCKER_IMAGE_RELEASE_NAME)
+DOCKER_IMAGE_NAME ?= docker-jscraper
+DOCKER_IMAGE_TAG ?= "1.0.0"
+DOCKER_CONTAINER_NAME ?= $(DOCKER_IMAGE_NAME)
 
-.PHONY: remove-docker-images-env
-remove-docker-images-env:
-	docker rmi '$(DOCKER_IMAGE_ENV_NAME)' 2> /dev/null || true
+.PHONY: remove-docker-images
+remove-docker-images:
+	docker rmi '$(DOCKER_IMAGE_NAME)' 2> /dev/null || true
 
-.PHONY: build-docker-image-env
-build-docker-image-env: remove-docker-images-env
-	docker build -f ./Dockerfile.env --tag $(DOCKER_IMAGE_ENV_NAME) .
+.PHONY: build-docker-image
+build-docker-image: remove-docker-images
+	docker build -f ./Dockerfile --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) .
 
-.PHONY: stop-docker-container-env
-stop-docker-container-env:
-	docker stop $(DOCKER_CONTAINER_ENV_NAME) 2> /dev/null || true
+.PHONY: stop-docker-container
+stop-docker-container:
+	docker stop $(DOCKER_CONTAINER_NAME) 2> /dev/null || true
 
-.PHONY: stop-docker-container-env
-remove-docker-container-env: stop-docker-container-env
-	docker rm docker $(DOCKER_CONTAINER_ENV_NAME) 2> /dev/null || true
+.PHONY: stop-docker-container
+remove-docker-container: stop-docker-container
+	docker rm docker $(DOCKER_CONTAINER_NAME) 2> /dev/null || true
 
-.PHONY: start-docker-container-env
-start-docker-container-env: remove-docker-container-env build-docker-image-env
-	docker run -t -d --name $(DOCKER_CONTAINER_ENV_NAME) $(DOCKER_IMAGE_ENV_NAME)
+.PHONY: start-docker-container
+start-docker-container: remove-docker-container build-docker-image
+	docker run -t -d --name $(DOCKER_CONTAINER_NAME) $(DOCKER_IMAGE_NAME)
 
-.PHONY: shell-docker-container-env
-shell-docker-container-env:
-	docker exec -it --user juser $(DOCKER_CONTAINER_ENV_NAME) /bin/bash
+.PHONY: shell-docker-container
+shell-docker-container:
+	docker exec -it --user juser $(DOCKER_CONTAINER_NAME) /bin/bash
 
 .PHONY: list-docker-containers
 list-docker-containers:
@@ -35,11 +33,3 @@ list-docker-containers:
 .PHONY: list-docker-images
 list-docker-images:
 	@docker images
-
-.PHONY: build
-build:
-	docker build -f ./Dockerfile.release --tag $(DOCKER_IMAGE_RELEASE_NAME):$(DOCKER_IMAGE_RELEASE_TAG) .
-
-.PHONY: start
-start:
-	docker run -d --name $(DOCKER_CONTAINER_RELEASE_NAME) $(DOCKER_IMAGE_RELEASE_NAME)
