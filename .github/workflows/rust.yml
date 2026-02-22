@@ -17,6 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
+      run: cargo --version && rustc --version
       run: cargo build --verbose --manifest-path ./app/Cargo.toml
     - name: Run tests
       run: cargo test --verbose --manifest-path ./app/Cargo.toml
